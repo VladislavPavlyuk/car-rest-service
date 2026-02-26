@@ -9,7 +9,6 @@ import ua.com.foxmined.carrestservice.exception.EntityNotPresentException;
 import ua.com.foxmined.carrestservice.model.CarCategory;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -54,41 +53,35 @@ public class CarCategoryServiceImpl implements CarCategoryService{
     @Override
     @Transactional
     public CarCategory addCategory(String category) {
+        CarCategory carCategory = carCategoryRepository.findByName(category)
+                .orElseGet(() -> createNewCategory(category));
+        return carCategoryRepository.save(carCategory);
+    }
 
-        CarCategory findCarCategory = carCategoryRepository.findByName(category)
-                .orElseGet(() -> {
-                    CarCategory addCarCategory = new CarCategory();
-                    addCarCategory.setName(category);
-                    return addCarCategory;});
-        return carCategoryRepository.save(findCarCategory);
+    private CarCategory createNewCategory(String name) {
+        CarCategory category = new CarCategory();
+        category.setName(name);
+        return category;
     }
 
     @Override
     @Transactional
     public CarCategory updateCategory(String oldCategory, String newCategory) throws EntityNotPresentException {
-        Optional<CarCategory> findCarCategory = carCategoryRepository.findByName(oldCategory)
-                .map(existed -> { existed.setName(newCategory);
-                    return existed;
-                });
-        if (findCarCategory.isPresent()) {
-            return carCategoryRepository.save(findCarCategory.get());
-        }
-        else {
-            throw new EntityNotPresentException("Entity not present");
-        }
+        CarCategory existing = findCategoryOrThrow(oldCategory);
+        existing.setName(newCategory);
+        return carCategoryRepository.save(existing);
     }
 
     @Override
     @Transactional
     public void deleteCategory(String category) throws EntityNotPresentException {
+        CarCategory existing = findCategoryOrThrow(category);
+        carCategoryRepository.delete(existing);
+    }
 
-        Optional<CarCategory> findCarCategory = carCategoryRepository.findByName(category);
-        if (findCarCategory.isPresent()) {
-            carCategoryRepository.delete(findCarCategory.get());
-        }
-        else {
-            throw new EntityNotPresentException("Entity not present");
-        }
+    private CarCategory findCategoryOrThrow(String name) throws EntityNotPresentException {
+        return carCategoryRepository.findByName(name)
+                .orElseThrow(() -> new EntityNotPresentException("Entity not present"));
     }
 
 }

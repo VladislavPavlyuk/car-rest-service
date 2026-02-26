@@ -29,15 +29,20 @@ public class CarCsvParser {
             if (fragments.length < MIN_FRAGMENTS) {
                 return Optional.empty();
             }
-            String objectId = fragments[0].trim();
-            String manufacturer = fragments[1].trim();
-            String year = fragments[2].trim();
-            String model = fragments[3].trim();
-            List<String> categoryNames = parseCategoryNames(line, fragments);
-            return Optional.of(new CarCsvRow(objectId, manufacturer, year, model, categoryNames));
+            return Optional.of(parseFragments(line, fragments));
         } catch (Exception e) {
             throw new CarServiceException("Failed to parse CSV line: " + line, e);
         }
+    }
+
+    private CarCsvRow parseFragments(String line, String[] fragments) {
+        return new CarCsvRow(
+                fragments[0].trim(),
+                fragments[1].trim(),
+                fragments[2].trim(),
+                fragments[3].trim(),
+                parseCategoryNames(line, fragments)
+        );
     }
 
     /**

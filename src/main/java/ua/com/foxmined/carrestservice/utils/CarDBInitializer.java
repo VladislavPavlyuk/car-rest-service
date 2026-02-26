@@ -119,12 +119,17 @@ public class CarDBInitializer {
     }
 
     private void saveCarInformation(CarModel carModel, String year, String objectId) {
+        CarInformation carInformation = buildCarInformation(carModel, year, objectId);
+        carInformationService.save(carInformation);
+    }
+
+    private CarInformation buildCarInformation(CarModel carModel, String year, String objectId) {
         try {
-            CarInformation carInformation = new CarInformation();
-            carInformation.setCarModel(carModel);
-            carInformation.setDateOfManifacture(new SimpleDateFormat("yyyy").parse(year));
-            carInformation.setObjectId(objectId);
-            carInformationService.save(carInformation);
+            CarInformation info = new CarInformation();
+            info.setCarModel(carModel);
+            info.setDateOfManifacture(new SimpleDateFormat("yyyy").parse(year));
+            info.setObjectId(objectId);
+            return info;
         } catch (ParseException e) {
             log.warn("Invalid date format for year: {}", year);
             throw new CarServiceException("Invalid date format: " + year, e);
@@ -132,11 +137,13 @@ public class CarDBInitializer {
     }
 
     private void saveCategoriesToModel(CarModel carModel, List<CarCategory> categories) {
-        for (CarCategory category : categories) {
-            CarModelCategory link = new CarModelCategory();
-            link.setCarModel(carModel);
-            link.setCarCategory(category);
-            carModelCategoryService.save(link);
-        }
+        categories.forEach(category -> saveCategoryLink(carModel, category));
+    }
+
+    private void saveCategoryLink(CarModel carModel, CarCategory category) {
+        CarModelCategory link = new CarModelCategory();
+        link.setCarModel(carModel);
+        link.setCarCategory(category);
+        carModelCategoryService.save(link);
     }
 }
