@@ -9,6 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 class CarRestServiceApplicationTests {
 
     @Test
-    void contextLoads() {
+    void contextLoads_WhenApplicationStarts_LoadsSuccessfully() {
     }
 }

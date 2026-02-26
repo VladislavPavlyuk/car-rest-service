@@ -20,7 +20,7 @@ class CarApiIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    void getCars_returnsOk() throws Exception {
+    void getCars_WhenPaginationParamsProvided_ReturnsOkWithJsonList() throws Exception {
         mockMvc.perform(get("/api/v1/cars")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -29,7 +29,7 @@ class CarApiIntegrationTest {
     }
 
     @Test
-    void getCars_withFilters_returnsOk() throws Exception {
+    void getCars_WhenManufacturerAndModelFiltersProvided_ReturnsOkWithFilteredJsonList() throws Exception {
         mockMvc.perform(get("/api/v1/cars")
                         .param("manufacturer", "Audi")
                         .param("model", "Q3")
@@ -40,7 +40,7 @@ class CarApiIntegrationTest {
     }
 
     @Test
-    void getCategories_returnsOk() throws Exception {
+    void getCategories_WhenPaginationParamsProvided_ReturnsOkWithJsonList() throws Exception {
         mockMvc.perform(get("/api/v1/categories")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -49,7 +49,7 @@ class CarApiIntegrationTest {
     }
 
     @Test
-    void getManufacturers_returnsOk() throws Exception {
+    void getManufacturers_WhenPaginationParamsProvided_ReturnsOkWithJsonList() throws Exception {
         mockMvc.perform(get("/api/v1/manufacturers")
                         .param("page", "0")
                         .param("pageSize", "10"))
