@@ -3,6 +3,7 @@ package ua.com.foxmined.carrestservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxmined.carrestservice.dto.LogDataDto;
 import ua.com.foxmined.carrestservice.dto.LogIdResponse;
@@ -34,6 +35,7 @@ public class LogDataController {
      * @return response with created id
      */
     @PostMapping
+    @PreAuthorize("hasAuthority('create:items')")
     public ResponseEntity<LogIdResponse> createLog(@Valid @RequestBody LogDataDto dto) {
         LogData logData = new LogData();
         logData.setLevel(dto.getLevel());

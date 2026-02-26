@@ -27,7 +27,6 @@ public class EndPoints {
         endpoints.add(VERSION_1+GET_CARS);
         endpoints.add(VERSION_1+GET_CATEGORIES);
         endpoints.add(VERSION_1+GET_MANUFACTURERS);
-        endpoints.add(API_LOGS);
         return endpoints;
     }
 

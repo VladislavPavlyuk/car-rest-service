@@ -41,6 +41,7 @@ public class WebSecurityConfig {
         publicPaths.add("/api-docs.yaml");
 
         http.authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/api/logs").permitAll()
                 .mvcMatchers(publicPaths.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
                 .and()
