@@ -1,0 +1,13 @@
+spring:
+  datasource:
+      url: jdbc:postgresql://localhost:5438/Car_db
+      username: sa
+      password: admin
+      driverClassName: org.postgresql.Driver
+
+  flyway:
+      enabled: true
+      user: sa
+      password: admin
+      schemas: public
+      url: jdbc:postgresql://localhost:5438/Car_db
