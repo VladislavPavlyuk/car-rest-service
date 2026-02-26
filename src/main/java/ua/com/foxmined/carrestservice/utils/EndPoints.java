@@ -19,6 +19,11 @@ public class EndPoints {
     static public final String SET_CATEGORY = "/categories/{category}";
     static public final String UPDATE_CATEGORY = "/categories/{oldCategory}/{newCategory}";
     static public final String SET_MANUFACTURER_AND_MODEL_AND_YEAR = "/manufacturers/{manufacturer}/models/{model}/{year}";
+    static public final String GET_LOGS = "/logs";
+    static public final String GET_LOG_BY_ID = "/logs/{id}";
+    static public final String SET_LOG = "/logs";
+    static public final String UPDATE_LOG = "/logs/{id}";
+    static public final String DELETE_LOG = "/logs/{id}";
 
 
     static public List<String> getEndpointForAllUsers() {
@@ -26,6 +31,8 @@ public class EndPoints {
         endpoints.add(VERSION_1+GET_CARS);
         endpoints.add(VERSION_1+GET_CATEGORIES);
         endpoints.add(VERSION_1+GET_MANUFACTURERS);
+        endpoints.add(VERSION_1+GET_LOGS);
+        endpoints.add(VERSION_1+GET_LOG_BY_ID);
         return endpoints;
     }
 
@@ -38,6 +45,9 @@ public class EndPoints {
         endpoints.add(VERSION_1+SET_CATEGORY);
         endpoints.add(VERSION_1+UPDATE_CATEGORY);
         endpoints.add(VERSION_1+SET_MANUFACTURER_AND_MODEL_AND_YEAR);
+        endpoints.add(VERSION_1+SET_LOG);
+        endpoints.add(VERSION_1+UPDATE_LOG);
+        endpoints.add(VERSION_1+DELETE_LOG);
         return endpoints;
     }
 

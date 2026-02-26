@@ -31,11 +31,14 @@ public class LogData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LogData logData = (LogData) o;
-        return Objects.equals(id, logData.id);
+        return Objects.equals(id, logData.id)
+                && Objects.equals(level, logData.level)
+                && Objects.equals(src, logData.src)
+                && Objects.equals(message, logData.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, level, src, message);
     }
 }
