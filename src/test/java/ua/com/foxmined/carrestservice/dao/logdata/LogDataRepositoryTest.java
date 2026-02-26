@@ -3,8 +3,9 @@ package ua.com.foxmined.carrestservice.dao.logdata;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Testcontainers(disabledWithoutDocker = true)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("repository-test")
@@ -42,6 +43,9 @@ class LogDataRepositoryTest {
 
     @Autowired
     private LogDataRepository repository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     void save_WhenValidLogData_ReturnsSavedEntityWithId() {
@@ -101,6 +105,17 @@ class LogDataRepositoryTest {
         var actualResult = repository.findById(999L);
 
         assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    void countViaJdbcTemplate_WhenDataExists_ReturnsCorrectCount() {
+        createAndSave(LogLevel.INFO, "src1", "msg1");
+        createAndSave(LogLevel.DEBUG, "src2", "msg2");
+
+        Integer actualResult = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM log_data", Integer.class);
+        var expectedResult = 2;
+
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     private LogData createAndSave(LogLevel level, String src, String message) {
