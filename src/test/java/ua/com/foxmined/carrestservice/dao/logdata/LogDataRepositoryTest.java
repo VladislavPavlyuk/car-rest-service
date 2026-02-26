@@ -50,12 +50,16 @@ class LogDataRepositoryTest {
         logData.setSrc("test-service");
         logData.setMessage("Test message");
 
-        LogData saved = repository.save(logData);
+        LogData actualResult = repository.save(logData);
+        var expectedLevel = LogLevel.INFO;
+        var expectedSrc = "test-service";
+        var expectedMessage = "Test message";
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getLevel()).isEqualTo(LogLevel.INFO);
-        assertThat(saved.getSrc()).isEqualTo("test-service");
-        assertThat(saved.getMessage()).isEqualTo("Test message");
+        assertThat(actualResult).matches(log ->
+                log.getId() != null
+                        && log.getLevel() == expectedLevel
+                        && expectedSrc.equals(log.getSrc())
+                        && expectedMessage.equals(log.getMessage()));
     }
 
     @Test
@@ -63,10 +67,10 @@ class LogDataRepositoryTest {
         LogData log1 = createAndSave(LogLevel.DEBUG, "src1", "msg1");
         LogData log2 = createAndSave(LogLevel.ERROR, "src2", "msg2");
 
-        List<LogData> page = repository.findAll(PageRequest.of(0, 10)).toList();
+        List<LogData> actualResult = repository.findAll(PageRequest.of(0, 10)).toList();
+        var expectedIds = List.of(log1.getId(), log2.getId());
 
-        assertThat(page).hasSize(2);
-        assertThat(page).extracting(LogData::getId).containsExactlyInAnyOrder(log1.getId(), log2.getId());
+        assertThat(actualResult).extracting(LogData::getId).containsExactlyInAnyOrderElementsOf(expectedIds);
     }
 
     @Test
@@ -75,24 +79,28 @@ class LogDataRepositoryTest {
         createAndSave(LogLevel.DEBUG, "src2", "msg2");
         createAndSave(LogLevel.INFO, "src3", "msg3");
 
-        List<LogData> infoLogs = repository.findByLevel(LogLevel.INFO, PageRequest.of(0, 10)).toList();
+        List<LogData> actualResult = repository.findByLevel(LogLevel.INFO, PageRequest.of(0, 10)).toList();
+        var expectedSize = 2;
+        var expectedLevel = LogLevel.INFO;
 
-        assertThat(infoLogs).hasSize(2);
-        assertThat(infoLogs).allMatch(log -> log.getLevel() == LogLevel.INFO);
+        assertThat(actualResult).hasSize(expectedSize).allMatch(log -> log.getLevel() == expectedLevel);
     }
 
     @Test
     void findById_WhenEntityExists_ReturnsOptionalWithEntity() {
         LogData saved = createAndSave(LogLevel.INFO, "src", "msg");
 
-        assertThat(repository.findById(saved.getId())).hasValueSatisfying(
-                log -> assertThat(log.getMessage()).isEqualTo("msg")
-        );
+        var actualResult = repository.findById(saved.getId());
+        var expectedMessage = "msg";
+
+        assertThat(actualResult).isPresent().get().extracting(LogData::getMessage).isEqualTo(expectedMessage);
     }
 
     @Test
     void findById_WhenEntityNotExists_ReturnsEmptyOptional() {
-        assertThat(repository.findById(999L)).isEmpty();
+        var actualResult = repository.findById(999L);
+
+        assertThat(actualResult).isEmpty();
     }
 
     private LogData createAndSave(LogLevel level, String src, String message) {
