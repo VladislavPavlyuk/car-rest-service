@@ -55,7 +55,7 @@ public class CarSummaryServiceImpl implements CarSummaryService{
         carModelService.delete(carModel);
     }
 
-    private CarMaker findManufacturerOrThrow(String manufacturer) {
+    private CarMaker findManufacturerOrThrow(String manufacturer) throws EntityNotPresentException {
         List<CarMaker> carMakers = carMakerService.findByName(manufacturer);
         if (carMakers.isEmpty()) {
             throw new EntityNotPresentException("Manufacturer not found: " + manufacturer);
@@ -63,7 +63,7 @@ public class CarSummaryServiceImpl implements CarSummaryService{
         return carMakers.get(0);
     }
 
-    private CarModel findModelOrThrow(String modelName, Long makerId) {
+    private CarModel findModelOrThrow(String modelName, Long makerId) throws EntityNotPresentException {
         List<CarModel> models = carModelService.findByNameAndCarMakerLike(modelName, makerId);
         if (models.isEmpty()) {
             throw new EntityNotPresentException("Model not found: " + modelName);
