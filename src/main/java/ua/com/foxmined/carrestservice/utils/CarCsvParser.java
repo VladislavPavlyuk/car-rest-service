@@ -2,6 +2,7 @@ package ua.com.foxmined.carrestservice.utils;
 
 import org.springframework.stereotype.Component;
 import ua.com.foxmined.carrestservice.dto.CarCsvRow;
+import ua.com.foxmined.carrestservice.exception.CarServiceException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,18 +24,20 @@ public class CarCsvParser {
      * @return parsed row or empty if invalid
      */
     public Optional<CarCsvRow> parseLine(String line) {
-        String[] fragments = line.split(",");
-        if (fragments.length < MIN_FRAGMENTS) {
-            return Optional.empty();
+        try {
+            String[] fragments = line.split(",");
+            if (fragments.length < MIN_FRAGMENTS) {
+                return Optional.empty();
+            }
+            String objectId = fragments[0].trim();
+            String manufacturer = fragments[1].trim();
+            String year = fragments[2].trim();
+            String model = fragments[3].trim();
+            List<String> categoryNames = parseCategoryNames(line, fragments);
+            return Optional.of(new CarCsvRow(objectId, manufacturer, year, model, categoryNames));
+        } catch (Exception e) {
+            throw new CarServiceException("Failed to parse CSV line: " + line, e);
         }
-
-        String objectId = fragments[0].trim();
-        String manufacturer = fragments[1].trim();
-        String year = fragments[2].trim();
-        String model = fragments[3].trim();
-        List<String> categoryNames = parseCategoryNames(line, fragments);
-
-        return Optional.of(new CarCsvRow(objectId, manufacturer, year, model, categoryNames));
     }
 
     /**

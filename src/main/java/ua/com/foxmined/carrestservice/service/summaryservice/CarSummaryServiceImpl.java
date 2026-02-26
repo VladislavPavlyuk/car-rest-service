@@ -2,8 +2,8 @@ package ua.com.foxmined.carrestservice.service.summaryservice;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import ua.com.foxmined.carrestservice.exception.CarServiceException;
 import ua.com.foxmined.carrestservice.exception.EntityNotPresentException;
-import ua.com.foxmined.carrestservice.exception.EntityPresentException;
 import ua.com.foxmined.carrestservice.model.CarInformation;
 import ua.com.foxmined.carrestservice.model.CarMaker;
 import ua.com.foxmined.carrestservice.model.CarModel;
@@ -113,17 +113,17 @@ public class CarSummaryServiceImpl implements CarSummaryService{
             addCarModel = findCarModel.get();
         }
 
-        CarInformation addCarInformation = new CarInformation();
-        addCarInformation.setCarModel(addCarModel);
         try {
+            CarInformation addCarInformation = new CarInformation();
+            addCarInformation.setCarModel(addCarModel);
             addCarInformation.setDateOfManifacture(new SimpleDateFormat("yyyy").parse(year));
+            Random randomGenerator = new Random();
+            addCarInformation.setObjectId(String.valueOf(randomGenerator.nextInt(1000000)));
+            return carInformationService.save(addCarInformation);
         } catch (ParseException e) {
-            log.debug("invalid Date format");
+            log.warn("Invalid date format for year: {}", year);
+            throw new CarServiceException("Invalid date format: " + year, e);
         }
-        Random randomGenerator = new Random();
-        addCarInformation.setObjectId(String.valueOf(randomGenerator.nextInt(1000000)));
-
-        return carInformationService.save(addCarInformation);
     }
 
 }

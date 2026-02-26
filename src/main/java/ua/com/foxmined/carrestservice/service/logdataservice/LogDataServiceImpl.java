@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxmined.carrestservice.dao.logdata.LogDataRepository;
 import ua.com.foxmined.carrestservice.dto.LogDataDto;
+import ua.com.foxmined.carrestservice.exception.CarServiceException;
 import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 
@@ -62,19 +63,27 @@ public class LogDataServiceImpl implements LogDataService {
 
     @Override
     public List<LogData> findAllLimited(Integer limit) {
-        if (limit == null) {
-            return StreamSupport.stream(logDataRepository.findAll().spliterator(), false)
-                    .collect(Collectors.toList());
+        try {
+            if (limit == null) {
+                return StreamSupport.stream(logDataRepository.findAll().spliterator(), false)
+                        .collect(Collectors.toList());
+            }
+            return logDataRepository.findAll(org.springframework.data.domain.PageRequest.of(0, limit)).toList();
+        } catch (Exception e) {
+            throw new CarServiceException("Failed to fetch logs", e);
         }
-        return logDataRepository.findAll(org.springframework.data.domain.PageRequest.of(0, limit)).toList();
     }
 
     @Override
     public LogData createFromDto(LogDataDto dto) {
-        LogData logData = new LogData();
-        logData.setLevel(dto.getLevel());
-        logData.setSrc(dto.getSrc());
-        logData.setMessage(dto.getMessage());
-        return logDataRepository.save(logData);
+        try {
+            LogData logData = new LogData();
+            logData.setLevel(dto.getLevel());
+            logData.setSrc(dto.getSrc());
+            logData.setMessage(dto.getMessage());
+            return logDataRepository.save(logData);
+        } catch (Exception e) {
+            throw new CarServiceException("Failed to create log entry", e);
+        }
     }
 }

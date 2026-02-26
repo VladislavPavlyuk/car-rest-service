@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ua.com.foxmined.carrestservice.dto.CarCsvRow;
-import ua.com.foxmined.carrestservice.exception.FileException;
+import ua.com.foxmined.carrestservice.exception.CarServiceException;
 import ua.com.foxmined.carrestservice.model.CarCategory;
 import ua.com.foxmined.carrestservice.model.CarInformation;
 import ua.com.foxmined.carrestservice.model.CarModel;
@@ -53,16 +53,22 @@ public class CarDBInitializer {
     }
 
     public void createRowsInDb() {
-        if (isDbAlreadyPopulated()) {
+        try {
+            if (isDbAlreadyPopulated()) {
+                log.info("DB initialize complete");
+                return;
+            }
+            List<String> carRows = loadAndSkipHeader();
+            for (String line : carRows) {
+                carCsvParser.parseLine(line).ifPresent(this::persistRow);
+            }
             log.info("DB initialize complete");
-            return;
+        } catch (CarServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("DB initialization failed: {}", e.getMessage());
+            throw new CarServiceException("Database initialization failed", e);
         }
-
-        List<String> carRows = loadAndSkipHeader();
-        for (String line : carRows) {
-            carCsvParser.parseLine(line).ifPresent(this::persistRow);
-        }
-        log.info("DB initialize complete");
     }
 
     private boolean isDbAlreadyPopulated() {
@@ -74,17 +80,24 @@ public class CarDBInitializer {
         try {
             List<String> lines = txtFileReader.readFile(carsource);
             return carCsvParser.skipHeader(lines);
-        } catch (FileException e) {
-            log.error("Error open file");
-            return new ArrayList<>();
+        } catch (CarServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error loading car data: {}", e.getMessage());
+            throw new CarServiceException("Failed to load car data file", e);
         }
     }
 
     private void persistRow(CarCsvRow row) {
-        CarModel carModel = carSummaryService.addManufacturerAndModel(row.manufacturer(), row.model());
-        List<CarCategory> categories = resolveCategories(row.categoryNames());
-        saveCategoriesToModel(carModel, categories);
-        saveCarInformation(carModel, row.year(), row.objectId());
+        try {
+            CarModel carModel = carSummaryService.addManufacturerAndModel(row.manufacturer(), row.model());
+            List<CarCategory> categories = resolveCategories(row.categoryNames());
+            saveCategoriesToModel(carModel, categories);
+            saveCarInformation(carModel, row.year(), row.objectId());
+        } catch (Exception e) {
+            log.warn("Failed to persist row {}: {}", row.objectId(), e.getMessage());
+            throw new CarServiceException("Failed to persist car row", e);
+        }
     }
 
     private List<CarCategory> resolveCategories(List<String> categoryNames) {
@@ -106,15 +119,16 @@ public class CarDBInitializer {
     }
 
     private void saveCarInformation(CarModel carModel, String year, String objectId) {
-        CarInformation carInformation = new CarInformation();
-        carInformation.setCarModel(carModel);
         try {
+            CarInformation carInformation = new CarInformation();
+            carInformation.setCarModel(carModel);
             carInformation.setDateOfManifacture(new SimpleDateFormat("yyyy").parse(year));
+            carInformation.setObjectId(objectId);
+            carInformationService.save(carInformation);
         } catch (ParseException e) {
-            log.debug("invalid Date format");
+            log.warn("Invalid date format for year: {}", year);
+            throw new CarServiceException("Invalid date format: " + year, e);
         }
-        carInformation.setObjectId(objectId);
-        carInformationService.save(carInformation);
     }
 
     private void saveCategoriesToModel(CarModel carModel, List<CarCategory> categories) {
