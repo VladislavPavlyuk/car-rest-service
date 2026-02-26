@@ -6,6 +6,7 @@ import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 import ua.com.foxmined.carrestservice.service.DAOInterface;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,4 +30,12 @@ public interface LogDataService extends DAOInterface<LogData> {
      * @return page of log entries
      */
     Page<LogData> findByLevel(LogLevel level, Pageable pageable);
+
+    /**
+     * Finds log entries with optional limit.
+     *
+     * @param limit max number of records (null = all)
+     * @return list of log entries
+     */
+    List<LogData> findAllLimited(Integer limit);
 }

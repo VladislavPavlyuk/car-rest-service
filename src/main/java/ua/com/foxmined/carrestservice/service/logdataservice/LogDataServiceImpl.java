@@ -8,7 +8,10 @@ import ua.com.foxmined.carrestservice.dao.logdata.LogDataRepository;
 import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Implementation of {@link LogDataService}.
@@ -52,5 +55,14 @@ public class LogDataServiceImpl implements LogDataService {
     @Override
     public Page<LogData> findByLevel(LogLevel level, Pageable pageable) {
         return logDataRepository.findByLevel(level, pageable);
+    }
+
+    @Override
+    public List<LogData> findAllLimited(Integer limit) {
+        if (limit == null) {
+            return StreamSupport.stream(logDataRepository.findAll().spliterator(), false)
+                    .collect(Collectors.toList());
+        }
+        return logDataRepository.findAll(org.springframework.data.domain.PageRequest.of(0, limit)).toList();
     }
 }
