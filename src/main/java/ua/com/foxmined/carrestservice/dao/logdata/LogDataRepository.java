@@ -8,11 +8,27 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 
+/**
+ * Repository for LogData entity persistence operations.
+ */
 @Repository
 @Transactional
 public interface LogDataRepository extends PagingAndSortingRepository<LogData, Long> {
 
+    /**
+     * Finds all log entries with pagination.
+     *
+     * @param pageable pagination parameters
+     * @return page of log entries
+     */
     Page<LogData> findAll(Pageable pageable);
 
+    /**
+     * Finds log entries by severity level with pagination.
+     *
+     * @param level    log level filter
+     * @param pageable pagination parameters
+     * @return page of log entries
+     */
     Page<LogData> findByLevel(LogLevel level, Pageable pageable);
 }

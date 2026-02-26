@@ -6,6 +6,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Objects;
 
+// Entity representing a log entry stored in the database.
+ 
 @Entity
 @Getter
 @Setter
@@ -16,13 +18,16 @@ public class LogData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Log severity level. 
     @Enumerated(EnumType.STRING)
     @Column(name = "level", nullable = false)
     private LogLevel level;
 
+    // Source identifier (e.g. class name, component). 
     @Column(name = "src", columnDefinition = "TEXT")
     private String src;
 
+    // Log message text.
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
@@ -40,5 +45,10 @@ public class LogData {
     @Override
     public int hashCode() {
         return Objects.hash(id, level, src, message);
+    }
+
+    @Override
+    public String toString() {
+        return "LogData{id=" + id + ", level=" + level + ", src='" + src + "', message='" + message + "'}";
     }
 }

@@ -19,6 +19,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * REST controller for log data CRUD operations.
+ */
 @RestController
 @RequestMapping(value = EndPoints.VERSION_1)
 @SecurityRequirement(name = "bearerAuth")
@@ -27,6 +30,14 @@ public class LogDataController {
     @Autowired
     private LogDataService logDataService;
 
+    /**
+     * Returns paginated list of log entries, optionally filtered by level.
+     *
+     * @param page     page index (0-based)
+     * @param pageSize page size (1-100)
+     * @param level    optional filter by log level
+     * @return list of log entries
+     */
     @RequestMapping(value = EndPoints.GET_LOGS, method = RequestMethod.GET)
     public ResponseEntity<List<LogData>> getLogs(
             @RequestParam(name = "page", defaultValue = "0") @Min(0) Integer page,
@@ -38,6 +49,12 @@ public class LogDataController {
         return new ResponseEntity<>(logs, HttpStatus.OK);
     }
 
+    /**
+     * Returns a log entry by id.
+     *
+     * @param id log entry id
+     * @return log entry or 404 if not found
+     */
     @RequestMapping(value = EndPoints.GET_LOG_BY_ID, method = RequestMethod.GET)
     public ResponseEntity<LogData> getLogById(@PathVariable Long id) {
         return logDataService.findById(id)
@@ -45,6 +62,12 @@ public class LogDataController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Creates a new log entry.
+     *
+     * @param dto log data
+     * @return created log entry
+     */
     @RequestMapping(value = EndPoints.SET_LOG, method = RequestMethod.POST)
     @PreAuthorize("hasAuthority('create:items')")
     public ResponseEntity<LogData> createLog(@Valid @RequestBody LogDataDto dto) {
@@ -55,9 +78,15 @@ public class LogDataController {
         return new ResponseEntity<>(logDataService.save(logData), HttpStatus.CREATED);
     }
 
+    /**
+     * Updates an existing log entry.
+     *
+     * @param id  log entry id
+     * @param dto updated log data
+     */
     @RequestMapping(value = EndPoints.UPDATE_LOG, method = RequestMethod.PUT)
     @PreAuthorize("hasAuthority('update:items')")
-    public ResponseEntity<?> updateLog(@PathVariable Long id, @Valid @RequestBody LogDataDto dto) {
+    public ResponseEntity<?> updateLog(@PathVariable Long id, @Valid @RequestBody LogDataDto dto) throws EntityNotPresentException {
         LogData logData = logDataService.findById(id)
                 .orElseThrow(() -> new EntityNotPresentException("LogData with id " + id + " not found"));
         logData.setLevel(dto.getLevel());
@@ -67,9 +96,14 @@ public class LogDataController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Deletes a log entry by id.
+     *
+     * @param id log entry id
+     */
     @RequestMapping(value = EndPoints.DELETE_LOG, method = RequestMethod.DELETE)
     @PreAuthorize("hasAuthority('delete:items')")
-    public ResponseEntity<?> deleteLog(@PathVariable Long id) {
+    public ResponseEntity<?> deleteLog(@PathVariable Long id) throws EntityNotPresentException {
         LogData logData = logDataService.findById(id)
                 .orElseThrow(() -> new EntityNotPresentException("LogData with id " + id + " not found"));
         logDataService.delete(logData);

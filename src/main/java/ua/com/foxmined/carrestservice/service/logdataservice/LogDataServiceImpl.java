@@ -10,6 +10,9 @@ import ua.com.foxmined.carrestservice.model.LogLevel;
 
 import java.util.Optional;
 
+/**
+ * Implementation of {@link LogDataService}.
+ */
 @Service
 public class LogDataServiceImpl implements LogDataService {
 
