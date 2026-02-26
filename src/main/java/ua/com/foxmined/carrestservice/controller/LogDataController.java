@@ -14,12 +14,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 
-/**
- * REST controller for log data API.
- * <p>
- * POST /api/logs - save new log entry
- * GET /api/logs?limit=N - get list (limit optional)
- */
+// POST /api/logs - create, GET /api/logs?limit=N - list
 @RestController
 @RequestMapping("/api/logs")
 public class LogDataController {
@@ -30,12 +25,6 @@ public class LogDataController {
         this.logDataService = logDataService;
     }
 
-    /**
-     * Saves a new log entry.
-     *
-     * @param dto log data (level, src, message)
-     * @return response with created id
-     */
     @PostMapping
     @PreAuthorize("hasAuthority('create:items')")
     public ResponseEntity<LogIdResponse> createLog(@Valid @RequestBody LogDataDto dto) {
@@ -43,12 +32,6 @@ public class LogDataController {
         return new ResponseEntity<>(new LogIdResponse(saved.getId()), HttpStatus.CREATED);
     }
 
-    /**
-     * Returns list of log entries.
-     *
-     * @param limit optional max number of records (omit for all)
-     * @return list of log entries
-     */
     @GetMapping
     public ResponseEntity<List<LogData>> getLogs(
             @RequestParam(name = "limit", required = false) @Min(1) @Max(1000) Integer limit) {

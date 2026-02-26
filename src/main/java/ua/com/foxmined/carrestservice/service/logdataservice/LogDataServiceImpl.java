@@ -14,9 +14,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Implementation of {@link LogDataService}.
- */
 @Service
 public class LogDataServiceImpl implements LogDataService {
 

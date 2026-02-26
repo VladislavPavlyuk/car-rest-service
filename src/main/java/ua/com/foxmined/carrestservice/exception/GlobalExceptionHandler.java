@@ -11,9 +11,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Centralized exception handling for the application.
- */
+// catches exceptions and returns JSON error
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

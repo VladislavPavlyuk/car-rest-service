@@ -21,9 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Orchestrates database initialization from CSV car data.
- */
+// loads cars from CSV file into database
 @Log4j2
 @Service
 public class CarDBInitializer {

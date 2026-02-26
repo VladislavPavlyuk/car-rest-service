@@ -1,8 +1,6 @@
 package ua.com.foxmined.carrestservice.exception;
 
-/**
- * Base runtime exception for the application. All caught exceptions are wrapped and handled centrally.
- */
+// base exception for this app
 public class CarServiceException extends RuntimeException {
 
     public CarServiceException(String message) {

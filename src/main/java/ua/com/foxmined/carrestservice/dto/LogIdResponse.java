@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Response DTO containing only log entry id.
- */
 @Getter
 @Setter
 @NoArgsConstructor

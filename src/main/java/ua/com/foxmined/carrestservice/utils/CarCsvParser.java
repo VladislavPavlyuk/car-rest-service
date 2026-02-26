@@ -9,20 +9,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Parses CSV lines into structured car data.
- */
 @Component
 public class CarCsvParser {
 
     private static final int MIN_FRAGMENTS = 5;
 
-    /**
-     * Parses a CSV line into CarCsvRow.
-     *
-     * @param line CSV line (objectId,Make,Year,Model,Category)
-     * @return parsed row or empty if invalid
-     */
+    // format: objectId,Make,Year,Model,Category
     public Optional<CarCsvRow> parseLine(String line) {
         try {
             String[] fragments = line.split(",");
@@ -45,9 +37,6 @@ public class CarCsvParser {
         );
     }
 
-    /**
-     * Returns data lines without header.
-     */
     public List<String> skipHeader(List<String> lines) {
         if (lines.isEmpty()) {
             return lines;
