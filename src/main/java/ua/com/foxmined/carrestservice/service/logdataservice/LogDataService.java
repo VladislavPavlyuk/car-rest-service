@@ -2,6 +2,7 @@ package ua.com.foxmined.carrestservice.service.logdataservice;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ua.com.foxmined.carrestservice.dto.LogDataDto;
 import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 import ua.com.foxmined.carrestservice.service.DAOInterface;
@@ -38,4 +39,12 @@ public interface LogDataService extends DAOInterface<LogData> {
      * @return list of log entries
      */
     List<LogData> findAllLimited(Integer limit);
+
+    /**
+     * Creates and saves a log entry from DTO.
+     *
+     * @param dto log data
+     * @return saved log entry with id
+     */
+    LogData createFromDto(LogDataDto dto);
 }

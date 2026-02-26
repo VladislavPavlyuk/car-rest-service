@@ -1,7 +1,6 @@
 package ua.com.foxmined.carrestservice;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,15 +12,12 @@ import ua.com.foxmined.carrestservice.utils.CarDBInitializer;
 @SpringBootApplication
 public class CarRestServiceApplication {
 
-	@Autowired
-	private CarDBInitializer carDBInitializer;
-
 	public static void main(String[] args) {
 		SpringApplication.run(CarRestServiceApplication.class, args);
 	}
 
 	@Bean
-	public CommandLineRunner commandLineRunner() {
+	public CommandLineRunner commandLineRunner(CarDBInitializer carDBInitializer) {
 		return args -> {
 			log.info("ApplicationRunner has started");
 			carDBInitializer.createRowsInDb();

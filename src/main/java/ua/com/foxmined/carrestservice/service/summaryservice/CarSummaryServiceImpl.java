@@ -1,7 +1,6 @@
 package ua.com.foxmined.carrestservice.service.summaryservice;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxmined.carrestservice.exception.EntityNotPresentException;
 import ua.com.foxmined.carrestservice.exception.EntityPresentException;
@@ -22,14 +21,16 @@ import java.util.Random;
 @Service
 public class CarSummaryServiceImpl implements CarSummaryService{
 
-    @Autowired
-    private CarMakerService carMakerService;
+    private final CarMakerService carMakerService;
+    private final CarModelService carModelService;
+    private final CarInformationService carInformationService;
 
-    @Autowired
-    private CarModelService carModelService;
-
-    @Autowired
-    private CarInformationService carInformationService;
+    public CarSummaryServiceImpl(CarMakerService carMakerService, CarModelService carModelService,
+                                CarInformationService carInformationService) {
+        this.carMakerService = carMakerService;
+        this.carModelService = carModelService;
+        this.carInformationService = carInformationService;
+    }
 
     @Override
     public CarModel addManufacturerAndModel(String manufacturer, String model) {

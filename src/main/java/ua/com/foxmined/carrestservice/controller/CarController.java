@@ -1,7 +1,6 @@
 package ua.com.foxmined.carrestservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,11 +20,13 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class CarController {
 
-    @Autowired
-    private CarInformationService carInformationService;
+    private final CarInformationService carInformationService;
+    private final CarSummaryService carSummaryService;
 
-    @Autowired
-    private CarSummaryService carSummaryService;
+    public CarController(CarInformationService carInformationService, CarSummaryService carSummaryService) {
+        this.carInformationService = carInformationService;
+        this.carSummaryService = carSummaryService;
+    }
 
     @RequestMapping(value = EndPoints.GET_CARS, method = RequestMethod.GET)
     public ResponseEntity<List<CarInformation>> getCars(@Valid CarDto sourceCarFilter) {

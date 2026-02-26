@@ -1,6 +1,5 @@
 package ua.com.foxmined.carrestservice.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,8 +24,11 @@ import java.util.List;
 @RequestMapping("/api/logs")
 public class LogDataController {
 
-    @Autowired
-    private LogDataService logDataService;
+    private final LogDataService logDataService;
+
+    public LogDataController(LogDataService logDataService) {
+        this.logDataService = logDataService;
+    }
 
     /**
      * Saves a new log entry.
@@ -37,11 +39,7 @@ public class LogDataController {
     @PostMapping
     @PreAuthorize("hasAuthority('create:items')")
     public ResponseEntity<LogIdResponse> createLog(@Valid @RequestBody LogDataDto dto) {
-        LogData logData = new LogData();
-        logData.setLevel(dto.getLevel());
-        logData.setSrc(dto.getSrc());
-        logData.setMessage(dto.getMessage());
-        LogData saved = logDataService.save(logData);
+        LogData saved = logDataService.createFromDto(dto);
         return new ResponseEntity<>(new LogIdResponse(saved.getId()), HttpStatus.CREATED);
     }
 

@@ -1,10 +1,10 @@
 package ua.com.foxmined.carrestservice.service.logdataservice;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxmined.carrestservice.dao.logdata.LogDataRepository;
+import ua.com.foxmined.carrestservice.dto.LogDataDto;
 import ua.com.foxmined.carrestservice.model.LogData;
 import ua.com.foxmined.carrestservice.model.LogLevel;
 
@@ -19,8 +19,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class LogDataServiceImpl implements LogDataService {
 
-    @Autowired
-    private LogDataRepository logDataRepository;
+    private final LogDataRepository logDataRepository;
+
+    public LogDataServiceImpl(LogDataRepository logDataRepository) {
+        this.logDataRepository = logDataRepository;
+    }
 
     @Override
     public LogData save(LogData logData) {
@@ -64,5 +67,14 @@ public class LogDataServiceImpl implements LogDataService {
                     .collect(Collectors.toList());
         }
         return logDataRepository.findAll(org.springframework.data.domain.PageRequest.of(0, limit)).toList();
+    }
+
+    @Override
+    public LogData createFromDto(LogDataDto dto) {
+        LogData logData = new LogData();
+        logData.setLevel(dto.getLevel());
+        logData.setSrc(dto.getSrc());
+        logData.setMessage(dto.getMessage());
+        return logDataRepository.save(logData);
     }
 }

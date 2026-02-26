@@ -1,6 +1,5 @@
 package ua.com.foxmined.carrestservice.service.modelcategoryservice;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,11 @@ import java.util.List;
 @Service
 public class CarModelCategoryServiceImpl implements CarModelCategoryService {
 
-    @Autowired
-    private CarModelCategoryRepository carModelCategoryRepository;
+    private final CarModelCategoryRepository carModelCategoryRepository;
+
+    public CarModelCategoryServiceImpl(CarModelCategoryRepository carModelCategoryRepository) {
+        this.carModelCategoryRepository = carModelCategoryRepository;
+    }
 
     @Override
     public CarModelCategory save(CarModelCategory carModelCategory) {

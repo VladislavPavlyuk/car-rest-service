@@ -1,7 +1,6 @@
 package ua.com.foxmined.carrestservice.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,11 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class MakerController {
 
-    @Autowired
-    private CarMakerService carMakerService;
+    private final CarMakerService carMakerService;
+
+    public MakerController(CarMakerService carMakerService) {
+        this.carMakerService = carMakerService;
+    }
 
     @RequestMapping(value = EndPoints.GET_MANUFACTURERS, method = RequestMethod.GET)
     public ResponseEntity<List<CarMaker>> getMaker(
